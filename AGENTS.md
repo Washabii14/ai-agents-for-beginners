@@ -332,3 +332,37 @@ Key packages from `requirements.txt`:
 - `browser_use` - Browser automation for agents
 - `mcp[cli]` - Model Context Protocol support
 - `mem0ai` - Memory management for agents
+
+## Cursor Cloud specific instructions
+
+### Virtual Environment
+
+The Python virtual environment lives at `/workspace/venv`. Always activate it before running commands:
+
+```bash
+source /workspace/venv/bin/activate
+```
+
+### Known Dependency Issue
+
+The `agent-framework` (MAF) package requires `opentelemetry-semantic-conventions-ai==0.4.1` due to an incompatibility with newer versions (the `SpanAttributes.LLM_SYSTEM` attribute was removed in 0.4.13+). The update script pins this version, but if you see `AttributeError: type object 'SpanAttributes' has no attribute 'LLM_SYSTEM'`, run:
+
+```bash
+pip install 'opentelemetry-semantic-conventions-ai==0.4.1'
+```
+
+### Running Notebooks
+
+Notebooks can be executed non-interactively via `nbclient` or `jupyter nbconvert --execute`. All code sample notebooks call external LLM APIs (GitHub Models or Azure AI), so they require valid credentials to complete end-to-end.
+
+### API Credentials
+
+- **GITHUB_TOKEN**: Required for all `*-semantic-kernel.ipynb` and `*-autogen.ipynb` notebooks. Must be a GitHub PAT with **Models** permission (not the default `gh` CLI token). Set in `/workspace/.env`.
+- **Azure credentials**: Required only for `*-azureaiagent.ipynb` notebooks. See `00-course-setup/README.md` for full list.
+
+### Linting & Testing
+
+This is an educational repo with no formal linter or test suite configured. To validate changes:
+- Verify Python imports: `python -c "import semantic_kernel; import autogen_agentchat; import agent_framework"`
+- Execute notebook cells: `jupyter nbconvert --to notebook --execute <notebook>.ipynb`
+- Notebooks are the primary "tests" — each is self-contained with expected outputs in markdown cells
